@@ -48,8 +48,6 @@ require 'WpPostGrabber.php';
 
 
 
-//$url = 'http://pwdcdev.com/myriadcore/blog/wp-json/wp/v2/posts';
-//$url = 'https://phillipswdc.com/wp-json/wp/v2/posts';
 
 $get_post = new WpPostGrabber();
 
@@ -57,36 +55,17 @@ $get_post->url = 'http://pwdcdev.com/myriadcore/blog/wp-json/wp/v2/posts';
 
 $get_post->post_number = 1;
 
+//$v = $get_post->wp_api_curl();
+
+//$v = $get_post->getAuthor();
+
 $v = $get_post->postObject();
+
+
+
 
 var_dump( $v );
 
-/*
-$json_data = wp_api_curl( $url );
-
-
-
-
-$json_data = $json_data[0];
-
-echo $json_data->date;
-
-echo '<br />';
-
-//convert the date to requested format
-$d=strtotime( $json_data->date );
-echo date("d M Y ", $d) . "<br>";
-
-echo '<br />';
-
-echo $json_data->excerpt->rendered;
-
-echo '<br />';
-//get image
-echo get_featured_image( $json_data );
-
-
-*/
 
 
 

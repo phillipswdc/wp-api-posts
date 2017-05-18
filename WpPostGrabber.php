@@ -15,9 +15,12 @@ class WpPostGrabber {
 
     private $featured_image;
 
+    private $author_array;
+
+
     /**
-     * @param $url
      * @return mixed
+     * @internal param $url
      */
     function wp_api_curl(){
 
@@ -36,6 +39,9 @@ class WpPostGrabber {
         return $json_data;
     }
 
+
+
+
     /**
      * @return mixed
      * @internal param $json_data
@@ -43,6 +49,8 @@ class WpPostGrabber {
     function get_featured_image(){
 
         $json_data = $this->wp_api_curl();
+
+        $url_save = $this->url;
 
         foreach( $json_data as $vals ){
             foreach( $vals->_links as $key => $val ){
@@ -66,7 +74,49 @@ class WpPostGrabber {
 
         endif;
 
+        $this->url = $url_save;
+
         return $this->featured_image;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    function getAuthor(){
+
+        $data = $this->wp_api_curl();
+
+        $url_save = $this->url;
+
+        foreach( $data as $vals_d ){
+            foreach( $vals_d->_links as $key_d => $val_d ){
+                if( $key_d == 'author'):
+                    $auth_api_address[]= $val_d[0]->href;
+                endif;
+            }
+        }
+
+        if( ! empty( $auth_api_address ) ):
+            $i = 0;
+            foreach( $auth_api_address as $auth_address ){
+                // set address
+                $this->url = $auth_address;
+
+                // curl to get the author info
+                $auth_obj = $this->wp_api_curl();
+
+                $this->author_array[$i]["name"] = $auth_obj->name;
+                $this->author_array[$i]["link"] = $auth_obj->link;
+
+                $i++;
+            }
+
+        endif;
+
+        $this->url = $url_save;
+
+        return $this->author_array;
     }
 
     /**
@@ -78,16 +128,19 @@ class WpPostGrabber {
 
         $img_urls = $this->get_featured_image();
 
+        $authors = $this->getAuthor();
+
         // add $img = $this->get_featured_image();
         $i = 0;
         foreach ( $raw_data as $key => $val ){
 
             if( $key = 'link' ){
-                $post[$i][$key] = $val->link;
+                $post_item[$i][$key] = $val->link;
             }
             if( $key = 'guid' ){
                 $post_item[$i][$key] = $val->guid->rendered;
             }
+
             if( $key = 'date' ){
                 //convert the date to requested format
                 $d=strtotime( $val->date );
@@ -101,10 +154,13 @@ class WpPostGrabber {
             }
                 $post_item[$i]["featured_image"] = $img_urls[$i];
 
+                $post_item[$i]["author_name"] = $authors[$i]["name"];
+
+                $post_item[$i]["author_link"] = $authors[$i]["link"];
+
             $i++;
 
         }
-
 
         return $post_item;
 
