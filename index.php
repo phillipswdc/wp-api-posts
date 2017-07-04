@@ -31,40 +31,26 @@
             <pre>
 <?php
 
+
+// Initiate the class
 require 'WpPostGrabber.php';
 
+//Define the API URL
+//Assuming that your installation of WP will be in a directory labeled “blog”
+$get_post->url = 'http://mydomain.com/blog/wp-json/wp/v2/posts';
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-$get_post = new WpPostGrabber();
-
-$get_post->url = 'http://pwdcdev.com/myriadcore/blog/wp-json/wp/v2/posts';
-
+//Set how many posts to retrieve
 $get_post->post_number = 1;
 
-//$v = $get_post->wp_api_curl();
+//Retrieve the data you need
 
-//$v = $get_post->getAuthor();
+//$feature_image = $get_post->get_featured_image(); 
+//$author = $get_post->getAuthor(); 
 
-$v = $get_post->postObject();
+$post_option = $get_post->postObject();
 
-
-
-
-var_dump( $v );
+var_dump( $post_option );
 
 
 
