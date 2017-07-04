@@ -52,13 +52,6 @@ $post_option = $get_post->postObject();
 
 var_dump( $post_option );
 
-
-
-
-
-
-
-
 ?>
             </pre>
         </div>
