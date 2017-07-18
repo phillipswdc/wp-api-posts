@@ -22,7 +22,7 @@ class WpPostGrabber {
      * @return mixed
      * @internal param $url
      */
-    function wp_api_curl(){
+    function wpApiCurl(){
 
         $url = $this->url;
 
@@ -46,33 +46,33 @@ class WpPostGrabber {
      * @return mixed
      * @internal param $json_data
      */
-    function get_featured_image(){
+    function getFeaturedImage(){
 
-        $json_data = $this->wp_api_curl();
+        $json_data = $this->wpApiCurl();
 
         $url_save = $this->url;
 
         foreach( $json_data as $vals ){
             foreach( $vals->_links as $key => $val ){
-                if( $key == 'wp:featuredmedia'):
-                    $img_api_address[]= $val[0]->href;
-                endif;
+                if( $key == 'wp:featuredmedia') {
+                    $img_api_address[] = $val[0]->href;
+                }
             }
         }
 
-        if( ! empty( $img_api_address ) ):
+        if( ! empty( $img_api_address ) ) {
 
-            foreach( $img_api_address as $img_address ){
+            foreach ($img_api_address as $img_address) {
                 // get image info
                 $this->url = $img_address;
 
                 // curl to get the correct url for the image
-                $img_obj = $this->wp_api_curl();
+                $img_obj = $this->wpApiCurl();
 
                 $this->featured_image[] = $img_obj->media_details->sizes->fp_blogdisplay->source_url;
             }
 
-        endif;
+        }
 
         $this->url = $url_save;
 
@@ -85,15 +85,15 @@ class WpPostGrabber {
      */
     function getAuthor(){
 
-        $data = $this->wp_api_curl();
+        $data = $this->wpApiCurl();
 
         $url_save = $this->url;
 
         foreach( $data as $vals_d ){
             foreach( $vals_d->_links as $key_d => $val_d ){
-                if( $key_d == 'author'):
+                if( $key_d == 'author'){
                     $auth_api_address[]= $val_d[0]->href;
-                endif;
+                }
             }
         }
 
@@ -104,7 +104,7 @@ class WpPostGrabber {
                 $this->url = $auth_address;
 
                 // curl to get the author info
-                $auth_obj = $this->wp_api_curl();
+                $auth_obj = $this->wpApiCurl();
 
                 $this->author_array[$i]["name"] = $auth_obj->name;
                 $this->author_array[$i]["link"] = $auth_obj->link;
@@ -124,15 +124,15 @@ class WpPostGrabber {
      */
     function postObject(){
 
-        $raw_data = $this->wp_api_curl();
+        $raw_data = $this->wpApiCurl();
 
-        $img_urls = $this->get_featured_image();
+        $img_urls = $this->getFeaturedImage();
 
         $authors = $this->getAuthor();
 
         // add $img = $this->get_featured_image();
         $i = 0;
-        foreach ( $raw_data as $key => $val ){
+        foreach( $raw_data as $key => $val ){
 
             if( $key = 'link' ){
                 $post_item[$i][$key] = $val->link;
@@ -142,7 +142,7 @@ class WpPostGrabber {
             }
 
             if( $key = 'date' ){
-                //convert the date to requested format
+                // convert the date to requested format
                 $d=strtotime( $val->date );
                 $post_item[$i][$key] = date("d M Y ", $d);
             }
